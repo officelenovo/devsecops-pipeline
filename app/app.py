@@ -1,21 +1,13 @@
-import os
 import subprocess
-import sqlite3
-
-DB_NAME = "test.db"
-
-def get_user(username):
-    conn = sqlite3.connect(DB_NAME)
-    cursor = conn.cursor()
-
-    # ❌ SQL Injection
-    query = f"SELECT * FROM users WHERE username = '{username}'"
-    cursor.execute(query)
-    return cursor.fetchall()
+import shlex
 
 def ping(host):
-    # ❌ Command Injection
-    subprocess.call("ping -c 1 " + host, shell=True)
+    safe_host = shlex.quote(host)
+    subprocess.run(
+        ["ping", "-c", "1", safe_host],
+        check=True
+    )
 
-# ❌ Hardcoded secret
-API_KEY = "AKIA1234567890SECRET"
+if __name__ == "__main__":
+    ping("127.0.0.1")
+
